@@ -1,46 +1,21 @@
-# ------------------------------------------------------------------------------
-# Based on a work at https://github.com/docker/docker.
-# ------------------------------------------------------------------------------
-# Pull base image.
-FROM kdelfour/supervisor-docker
-MAINTAINER Kevin Delfour <kevin@delfour.eu>
+FROM gliderlabs/alpine
+MAINTAINER Anatoli Nicolae <git@anatolinicolae.com>
 
-# ------------------------------------------------------------------------------
-# Install base
-RUN apt-get update
-RUN apt-get install -y build-essential g++ curl libssl-dev apache2-utils git libxml2-dev sshfs
+RUN apk --update add build-base g++ make curl wget openssl-dev apache2-utils git libxml2-dev sshfs nodejs bash tmux supervisor \
+ && rm -f /var/cache/apk/*
 
-# ------------------------------------------------------------------------------
-# Install Node.js
-RUN curl -sL https://deb.nodesource.com/setup | bash -
-RUN apt-get install -y nodejs
-    
-# ------------------------------------------------------------------------------
-# Install Cloud9
-RUN git clone https://github.com/c9/core.git /cloud9
-WORKDIR /cloud9
-RUN scripts/install-sdk.sh
+RUN git clone https://github.com/c9/core.git /cloud9 \
+ && curl -s -L https://raw.githubusercontent.com/c9/install/master/link.sh | bash \
+ && /cloud9/scripts/install-sdk.sh
 
-# Tweak standlone.js conf
-RUN sed -i -e 's_127.0.0.1_0.0.0.0_g' /cloud9/configs/standalone.js 
+RUN sed -i -e 's_127.0.0.1_0.0.0.0_g' /cloud9/configs/standalone.js \
+ && mkdir /workspace \
+ && mkdir -p /var/log/supervisor
 
-# Add supervisord conf
-ADD conf/cloud9.conf /etc/supervisor/conf.d/
+ADD supervisord.conf /etc/
 
-# ------------------------------------------------------------------------------
-# Add volumes
-RUN mkdir /workspace
 VOLUME /workspace
 
-# ------------------------------------------------------------------------------
-# Clean up APT when done.
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# ------------------------------------------------------------------------------
-# Expose ports.
 EXPOSE 80
-EXPOSE 3000
 
-# ------------------------------------------------------------------------------
-# Start supervisor, define default command.
-CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+ENTRYPOINT ["supervisord", "--nodaemon", "--configuration", "/etc/supervisord.conf"]
