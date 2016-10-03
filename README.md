@@ -10,31 +10,31 @@ This repository contains Dockerfile of Cloud9 IDE running on Alpine Linux for Do
 
 ## Install Docker.
 
-Download automated build from public Docker Hub Registry: docker pull sqrd/cloud9-docker
+Download automated build from public Docker Hub Registry: docker pull anatolinicolae/alpine-cloud9
 
-(alternatively, you can build an image from Dockerfile: docker build -t="sqrd/cloud9-docker" github.com/anatolinicolae/cloud9-docker)
+(alternatively, you can build an image from Dockerfile: docker build -t="anatolinicolae/alpine-cloud9" github.com/anatolinicolae/cloud9-docker)
 
 ## Usage
 
-    docker run -it -d -p 80:80 sqrd/cloud9-docker
+    docker run -it -d -p 80:80 anatolinicolae/alpine-cloud9
     
 You can add a workspace as a volume directory with the argument *-v /your-path/workspace/:/workspace/* like this :
 
-    docker run -it -d -p 80:80 -v /your-path/workspace/:/workspace/ sqrd/cloud9-docker
+    docker run -it -d -p 80:80 -v /your-path/workspace/:/workspace/ anatolinicolae/alpine-cloud9
     
 ## Build and run with custom config directory
 
 Get the latest version from github
 
-    git clone https://github.com/anatolinicolae/cloud9-docker
+    git clone https://github.com/anatolinicolae/alpine-cloud9
     cd cloud9-docker/
 
 Build it
 
-    sudo docker build --force-rm=true --tag="$USER/cloud9-docker:latest" .
+    sudo docker build --force-rm=true --tag="$USER/alpine-cloud9:latest" .
     
 And run
 
-    sudo docker run -d -p 80:80 -v /your-path/workspace/:/workspace/ $USER/cloud9-docker:latest
+    sudo docker run -d -p 80:80 -v /your-path/workspace/:/workspace/ $USER/alpine-cloud9:latest
     
 Enjoy !!    
